@@ -60,6 +60,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'django_extensions',
     
     # Third-party apps
     'rest_framework',
@@ -69,6 +71,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -182,7 +185,10 @@ CSRF_COOKIE_SECURE = env.bool('CSRF_COOKIE_SECURE', default=False)
 SESSION_COOKIE_SECURE = env.bool('SESSION_COOKIE_SECURE', default=False)
 X_FRAME_OPTIONS = 'DENY'
 
-print(f"DEBUG: {DEBUG}")
-print(f"SECURE_SSL_REDIRECT: {SECURE_SSL_REDIRECT}")
-print(f"CSRF_COOKIE_SECURE: {CSRF_COOKIE_SECURE}")
-print(f"SESSION_COOKIE_SECURE: {SESSION_COOKIE_SECURE}")
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = True  # For development purposes. Use CORS_ALLOWED_ORIGINS in production.
+
+# print(f"DEBUG: {DEBUG}")
+# print(f"SECURE_SSL_REDIRECT: {SECURE_SSL_REDIRECT}")
+# print(f"CSRF_COOKIE_SECURE: {CSRF_COOKIE_SECURE}")
+# print(f"SESSION_COOKIE_SECURE: {SESSION_COOKIE_SECURE}")

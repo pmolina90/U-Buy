@@ -17,8 +17,6 @@ class Command(BaseCommand):
                 defaults={
                     'name': category_data['name'],
                     'image': category_data['image'],
-                    'creationAt': category_data['creationAt'],
-                    'updatedAt': category_data['updatedAt']
                 }
             )
             
@@ -26,11 +24,12 @@ class Command(BaseCommand):
                 id=product['id'],
                 defaults={
                     'title': product['title'],
+                    'name': product['title'],
                     'price': product['price'],
                     'description': product['description'],
                     'images': product['images'],
-                    'creationAt': product['creationAt'],
-                    'updatedAt': product['updatedAt'],
+                    'created_at': product['creationAt'],
+                    'updated_at': product['updatedAt'],
                     'category': category,
                 }
             )

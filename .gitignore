@@ -1,3 +1,7 @@
 # Ignore .env files
 .env
 
+#superuser credentials
+#username: admin
+#email: p.a.molina90@gmail.com
+#password: admin2024$

@@ -16,7 +16,7 @@ class Product(models.Model):
     name = models.CharField(max_length=255, db_index=True)  # Name of the product
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0.0)], db_index=True)  # Price of the product
     description = models.TextField()  # Description of the product
-    stock = models.PositiveBigIntegerField(db_index=True)  # Stock of the product
+    stock = models.IntegerField(default=1, null=True, blank=True, db_index=True)  # Stock of the product
     images = models.JSONField()  # JSON field to store images
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE, db_index=True)  # Category of the product
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)  # Date and time of creation
