@@ -1,6 +1,8 @@
 from rest_framework import viewsets
 from .models import Category, Product, Cart, CartItem, Order, OrderItem
 from .serializers import CategorySerializer, ProductSerializer, CartSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer
+from django.views.generic import TemplateView
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -25,3 +27,6 @@ class OrderViewSet(viewsets.ModelViewSet):
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
+    
+class HomeView(TemplateView):
+    template_name = 'store/index.html'    

@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import environ
+import os
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 # Load the .env file
 env = environ.Env(
@@ -23,8 +28,6 @@ env = environ.Env(
 # reading .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 # JWT settings (if using JWT authentication)
 SIMPLE_JWT = {
@@ -44,7 +47,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = env.list('Allowed_Hosts', default=['*'])
+ALLOWED_HOSTS = env.list('Allowed_Hosts', default=['localhost', '127.0.0.1'])
 
 
 # Application definition
@@ -174,8 +177,12 @@ LOGGING = {
 }
 
 # Security settings
-SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=True)
-CSRF_COOKIE_SECURE = env.bool('CSRF_COOKIE_SECURE', default=True)
-SESSION_COOKIE_SECURE = env.bool('SESSION_COOKIE_SECURE', default=True)
+SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=False)
+CSRF_COOKIE_SECURE = env.bool('CSRF_COOKIE_SECURE', default=False)
+SESSION_COOKIE_SECURE = env.bool('SESSION_COOKIE_SECURE', default=False)
 X_FRAME_OPTIONS = 'DENY'
 
+print(f"DEBUG: {DEBUG}")
+print(f"SECURE_SSL_REDIRECT: {SECURE_SSL_REDIRECT}")
+print(f"CSRF_COOKIE_SECURE: {CSRF_COOKIE_SECURE}")
+print(f"SESSION_COOKIE_SECURE: {SESSION_COOKIE_SECURE}")
