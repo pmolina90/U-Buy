@@ -4,12 +4,12 @@ from django.conf import settings
 
 # Load environment variables
 AUTH0_DOMAIN = settings.AUTH0_DOMAIN
-AUTH0_CLIENT_ID = settings.AUTH0_M2M_CLIENT_ID
-AUTH0_CLIENT_SECRET = settings.AUTH0_M2M_CLIENT_SECRET
+AUTH0_CLIENT_ID = settings.AUTH0_CLIENT_ID
+AUTH0_CLIENT_SECRET = settings.AUTH0_CLIENT_SECRET
 AUTH0_AUDIENCE = settings.AUTH0_AUDIENCE
 
 def get_auth0_access_token():
-    url = f''
+    url = f'https://dev-iq3rsvc4so7gvwzi.us.auth0.com/oauth/token'
     headers = {'content-type': 'application/json'}
     payload = {
         'grant_type': 'client_credentials',
@@ -23,7 +23,7 @@ def get_auth0_access_token():
 
 def get_user_roles(user_id):
     token = get_auth0_access_token()
-    url = f''
+    url = f'https://dev-iq3rsvc4so7gvwzi.us.auth0.com/api/v2/users/{user_id}/roles'
     headers = {
         'Authorization': f'Bearer {token}',
         'content-type': 'application/json'
@@ -37,3 +37,4 @@ def example_usage():
     user_id = 'auth0|some-user-id'
     roles = get_user_roles(user_id)
     print(f'Roles for user {user_id}: {roles}')
+    

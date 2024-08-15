@@ -28,16 +28,6 @@ env = environ.Env(
 # reading .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-
-# JWT settings (if using JWT authentication)
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'SIGNING_KEY': env('JWT_SECRET_KEY'),
-}
-
-
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -164,6 +154,13 @@ REST_FRAMEWORK = {
     ],
 }
 
+# JWT settings (if using JWT authentication)
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'SIGNING_KEY': env('JWT_SECRET_KEY'),
+}
+
 # Logging configuration
 LOGGING = {
     'version': 1,
@@ -188,6 +185,22 @@ X_FRAME_OPTIONS = 'DENY'
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = True  # For development purposes. Use CORS_ALLOWED_ORIGINS in production.
 
+# Auth0 settings
+AUTH0_DOMAIN = env('AUTH0_DOMAIN')
+AUTH0_CLIENT_ID = env('AUTH0_CLIENT_ID')
+AUTH0_CLIENT_SECRET = env('AUTH0_CLIENT_SECRET')
+AUTH0_AUDIENCE = env('AUTH0_AUDIENCE')
+
+
+# Debugging print statements for Auth0 settings
+# print(f"AUTH0_DOMAIN: {AUTH0_DOMAIN}")
+# print(f"AUTH0_CLIENT_ID: {AUTH0_CLIENT_ID}")
+# print(f"AUTH0_CLIENT_SECRET: {AUTH0_CLIENT_SECRET}")  # Be cautious with sensitive information
+# print(f"AUTH0_AUDIENCE: {AUTH0_AUDIENCE}")
+
+
+
+# Print statements for debugging: 
 # print(f"DEBUG: {DEBUG}")
 # print(f"SECURE_SSL_REDIRECT: {SECURE_SSL_REDIRECT}")
 # print(f"CSRF_COOKIE_SECURE: {CSRF_COOKIE_SECURE}")

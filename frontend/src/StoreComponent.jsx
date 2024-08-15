@@ -1,45 +1,65 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import axiosInstance from './axiosInstance';
 
 function StoreComponent() {
     const [products, setProducts] = useState();
     const [cartItems, setCartItems] = useState();
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState();  
+    const [error, setError] = useState(null);
 
-    // Fetch products from the API
     useEffect(() => {
-        axiosInstance.get('products/')
-            .then(response => {
-                setProducts(response.data);
+        const fetchAccessToken = async () => {
+            try {
+                const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/token/`, {
+                    grant_type: 'client_credentials',
+                    client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
+                    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
+                    audience: process.env.REACT_APP_AUTH0_AUDIENCE,
+                });
+                return response.data.access_token;
+            } catch (error) {
+                console.error('Error fetching access token:', error.response ? error.response.data : error.message);
+                throw error;
+            }
+        };
+
+        const fetchData = async (token) => {
+            try {
+                axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                const [productsResponse, cartItemsResponse] = await Promise.all([
+                    axiosInstance.get('products/'),
+                    axiosInstance.get('cart-items/')
+                ]);
+                setProducts(productsResponse.data);
+                setCartItems(cartItemsResponse.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setError('Error fetching data');
+            } finally {
                 setLoading(false);
-            })
+            }
+        };
+
+        fetchAccessToken()
+            .then(fetchData)
             .catch(error => {
-                console.error('Error fetching products', error);
-                setError('Error fetching products');
+                console.error('Error setting access token:', error);
+                setError('Error setting access token');
                 setLoading(false);
-            });    
+            });
     }, );
 
-    // Fetch cart items
-    useEffect(() => {
-        axiosInstance.get('cart-items/')
-            .then(response => setCartItems(response.data))
-            .catch(error => console.error('Error fetching cart items', error));
-    }, );
-
-    // Add item to cart
     const addToCart = (product) => {
         axiosInstance.post('cart-items/', { product })
             .then(response => setCartItems(response.data))
-            .catch(error => console.error('Error adding item to cart', error));
+            .catch(error => console.error('Error adding item to cart:', error));
     };
 
-    // Remove item from cart
     const removeItem = (id) => {
         axiosInstance.delete(`cart-items/${id}/`)
             .then(response => setCartItems(response.data))
-            .catch(error => console.error('Error removing item from cart', error));
+            .catch(error => console.error('Error removing item from cart:', error));
     };
 
     if (loading) {
@@ -48,14 +68,14 @@ function StoreComponent() {
 
     if (error) {
         return <div>Error: {error}</div>;
-    }   
+    }
 
     return (
         <div>
             <h1>Store</h1>
             <div>
                 <h2>Products</h2>
-                {products && products.length === 0 ? (
+                {products.length === 0 ? (
                     <p>No products available</p>
                 ) : (
                     <ul>
@@ -81,7 +101,7 @@ function StoreComponent() {
             </div>
             <div>
                 <h2>Cart</h2>
-                {cartItems && cartItems.length === 0 ? (
+                {cartItems.length === 0 ? (
                     <p>No items in cart</p>
                 ) : (
                     <ul>

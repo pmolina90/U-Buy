@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import CategoryViewSet, ProductViewSet, CartViewSet, CartItemViewSet, OrderViewSet, OrderItemViewSet, HomeView
+from .views import CategoryViewSet, ProductViewSet, CartViewSet, CartItemViewSet, OrderViewSet, OrderItemViewSet, HomeView, UserRolesView
 
 
 router = DefaultRouter()
@@ -14,6 +14,6 @@ router.register(r'order-items', OrderItemViewSet, basename='orderitem')
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
     path('api/v1/', include(router.urls)),
-    
+    path('api/user-roles/<str:user_id>/', UserRolesView.as_view(), name='user-roles'),
 ]
 

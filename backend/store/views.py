@@ -1,9 +1,12 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.http import JsonResponse
+import requests
 from .models import Category, Product, Cart, CartItem, Order, OrderItem
 from .serializers import CategorySerializer, ProductSerializer, CartSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer
-
+from config.auth0_utils import get_user_roles 
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -40,3 +43,13 @@ class HomeView(APIView):
 
     def get(self, request):
         return Response({"message": "Welcome to the Store API!"})  
+    
+class UserRolesView(APIView):
+    permission_classes= [IsAuthenticated]
+    
+    def get(self, request, user_id):
+        try:
+            roles = get_user_roles(user_id)
+            return JsonResponse({'user_id': user_id, 'roles': roles})
+        except requests.HTTPError as e:
+            return JsonResponse({'error': str(e)}, status=e.response.status_code)
