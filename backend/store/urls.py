@@ -13,7 +13,7 @@ router.register(r'order-items', OrderItemViewSet, basename='orderitem')
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
-    path('', include(router.urls)),
+    path('api/v1/', include(router.urls)),
     
 ]
 
