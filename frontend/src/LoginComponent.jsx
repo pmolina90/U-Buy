@@ -1,50 +1,39 @@
-import React, { useState } from 'react';
-import axiosInstance from './axiosInstance';
+import React from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useAuth0 } from '@auth0/auth0-react';
 
 function LoginComponent({ onLoginSuccess }) {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const { loginWithRedirect, getIdTokenClaims } = useAuth0();
+    const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
+    const handleLogin = async () => {
+        await loginWithRedirect();
+        
+        // After successful login, get the ID token
+        const idToken = await getIdTokenClaims();
+        const token = idToken.__raw;
+
         try {
-            const response = await axiosInstance.post('auth/login/', {
-                email,
-                password,
-            });
-            localStorage.setItem('access_token', response.data.access);
-            localStorage.setItem('refresh_token', response.data.refresh);
-            axiosInstance.defaults.headers['Authorization'] = `Bearer ${response.data.access}`;
-            onLoginSuccess(); // Notify parent component of successful login
+            // Send the ID token to your Django backend
+            const response = await axios.post('api/token', { token });
+
+            // Extract and store the JWT tokens from your backend response
+            const { access, refresh } = response.data;
+            localStorage.setItem('access_token', access);
+            localStorage.setItem('refresh_token', refresh);
+
+            onLoginSuccess();
+            navigate('/store');
         } catch (error) {
-            setError('Invalid email or password');
+            console.error('Error logging in:', error);
         }
     };
 
     return (
         <div>
-            <h2>Login</h2>
-            <form onSubmit={handleLogin}>
-                <div>
-                    <label>Email:</label>
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </div>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                <button type="submit">Login</button>
-            </form>
+            <h1>Login</h1>
+            <button onClick={handleLogin}>Login with Auth0</button>
         </div>
     );
 }

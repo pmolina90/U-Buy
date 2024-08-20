@@ -29,7 +29,6 @@ class Product(models.Model):
     
 class Cart(models.Model):
     auth0_user_id = models.CharField(max_length=255, db_index=True)  # Auth0 user ID
-    products = models.ManyToManyField(Product)  # Products in the cart
     created_at = models.DateTimeField(auto_now_add=True)  # Date and time of creation
     updated_at = models.DateTimeField(auto_now=True)  # Date and time of last update
     
@@ -38,12 +37,17 @@ class Cart(models.Model):
         
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)  # Cart that the item belongs to
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)  # Product in the cart item
+    product = models.ForeignKey(Product, related_name='cart_items', on_delete=models.CASCADE)  # Product in the cart item
     quantity = models.PositiveBigIntegerField()  # Quantity of the product in the cart
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f'{self.quantity} x {self.product.name} in cart {self.cart.id}'
-    
+ 
+class Meta:
+        unique_together = ('cart', 'product')  
+         
 class Order(models.Model):
     auth0_user_id = models.CharField(max_length=255, db_index=True)  # Auth0 user ID
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)  # Date and time of creation

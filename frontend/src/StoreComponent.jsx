@@ -1,38 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import axiosInstance from './axiosInstance';
 
 function StoreComponent() {
-    const [products, setProducts] = useState();
-    const [cartItems, setCartItems] = useState();
+    const [products, setProducts] = useState([]);
+    const [cartItems, setCartItems] = useState([]);
+    const [cartId, setCartId] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchAccessToken = async () => {
+        const fetchData = async () => {
             try {
-                const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/token/`, {
-                    grant_type: 'client_credentials',
-                    client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
-                    client_secret: process.env.REACT_APP_AUTH0_CLIENT_SECRET,
-                    audience: process.env.REACT_APP_AUTH0_AUDIENCE,
-                });
-                return response.data.access_token;
-            } catch (error) {
-                console.error('Error fetching access token:', error.response ? error.response.data : error.message);
-                throw error;
-            }
-        };
-
-        const fetchData = async (token) => {
-            try {
-                axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-                const [productsResponse, cartItemsResponse] = await Promise.all([
+                const [productsResponse, cartResponse] = await Promise.all([
                     axiosInstance.get('products/'),
-                    axiosInstance.get('cart-items/')
+                    axiosInstance.get('cart/get-or-create/'),
                 ]);
+
+                console.log('Products response:', productsResponse.data);
+                console.log('Cart response:', cartResponse.data);
+
                 setProducts(productsResponse.data);
-                setCartItems(cartItemsResponse.data);
+                setCartItems(cartResponse.data.items || []);  // Ensure items is always an array
+                setCartId(cartResponse.data.id);
+
+
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setError('Error fetching data');
@@ -41,24 +32,35 @@ function StoreComponent() {
             }
         };
 
-        fetchAccessToken()
-            .then(fetchData)
-            .catch(error => {
-                console.error('Error setting access token:', error);
-                setError('Error setting access token');
-                setLoading(false);
-            });
-    }, );
+        fetchData();
+    }, []);
 
-    const addToCart = (product) => {
-        axiosInstance.post('cart-items/', { product })
-            .then(response => setCartItems(response.data))
-            .catch(error => console.error('Error adding item to cart:', error));
+    const addToCart = async (productId) => {
+        try {
+            if (!cartId) {
+                console.error('Cart ID is not set');
+                return;
+            }
+    
+            const response = await axiosInstance.post('/cart-items/', {
+                cart: cartId,
+                product: productId,
+                quantity: 1,
+            });
+            console.log('Item added to cart:', response.data);
+            setCartItems([...cartItems, response.data]);  // Update cart items state
+        } catch (error) {
+            console.error('Error adding item to cart:', error);
+        }
     };
+        
 
     const removeItem = (id) => {
-        axiosInstance.delete(`cart-items/${id}/`)
-            .then(response => setCartItems(response.data))
+        axiosInstance.delete(`http://127.0.0.1:8000/api/v1/cart-items/${id}/`)
+            .then(response => {
+                const updatedCartItems = cartItems.filter(item => item.id !== id);
+                setCartItems(updatedCartItems);
+            })
             .catch(error => console.error('Error removing item from cart:', error));
     };
 
@@ -92,7 +94,7 @@ function StoreComponent() {
                                     <h2>{product.title}</h2>
                                     <p>{product.description}</p>
                                     <p>{product.price}</p>
-                                    <button onClick={() => addToCart(product)}>Add to Cart</button>
+                                    <button onClick={() => addToCart(product.id)}>Add to Cart</button>
                                 </div>
                             </li>
                         ))}

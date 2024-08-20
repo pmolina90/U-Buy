@@ -15,6 +15,7 @@ from datetime import timedelta
 import environ
 import os
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -69,6 +70,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # React app URL
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -147,19 +152,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Django REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
-# JWT settings (if using JWT authentication)
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'SIGNING_KEY': env('JWT_SECRET_KEY'),
-}
 
 # Logging configuration
 LOGGING = {
@@ -185,11 +182,6 @@ X_FRAME_OPTIONS = 'DENY'
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = True  # For development purposes. Use CORS_ALLOWED_ORIGINS in production.
 
-# Auth0 settings
-AUTH0_DOMAIN = env('AUTH0_DOMAIN')
-AUTH0_CLIENT_ID = env('AUTH0_CLIENT_ID')
-AUTH0_CLIENT_SECRET = env('AUTH0_CLIENT_SECRET')
-AUTH0_AUDIENCE = env('AUTH0_AUDIENCE')
 
 
 # Debugging print statements for Auth0 settings
