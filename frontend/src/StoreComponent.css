@@ -1,3 +1,5 @@
+/* StoreComponent.css */
+
 /* Reset default styles */
 * {
     margin: 0;
@@ -34,9 +36,30 @@ nav ul li {
     margin-left: 20px;
 }
 
-nav ul li a {
+nav ul li .link-button {
+    background: none;
+    border: none;
     color: #fff;
-    text-decoration: none;
+    font-size: 24px;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.cart-icon {
+    font-size: 24px;
+}
+
+.cart-count {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 8px;
+    font-size: 12px;
 }
 
 /* Main content styles */
@@ -45,12 +68,21 @@ main {
 }
 
 /* Product card styles */
+.products ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+}
+
 .product-card {
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    margin-bottom: 20px;
+    width: 200px;
+    flex: 1 1 calc(25% - 20px);
 }
 
 .product-card img {
@@ -81,6 +113,72 @@ main {
 }
 
 .product-card button:hover {
+    background-color: #555;
+}
+
+/* Cart panel styles */
+.cart-panel {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 300px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: right 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.cart-panel.visible {
+    right: 0;
+}
+
+.cart-panel .close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.cart-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-right: 20px;
+}
+
+.cart-item h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.cart-item p {
+    font-size: 14px;
+    color: #777;
+}
+
+.cart-item button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cart-item button:hover {
     background-color: #555;
 }
 

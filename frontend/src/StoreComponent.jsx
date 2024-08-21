@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from './axiosInstance';
+import './StoreComponent.css'; // Import your CSS file
 
 function StoreComponent() {
-    const [products, setProducts] = useState([]);
-    const [cartItems, setCartItems] = useState([]);
+    const [products, setProducts] = useState();
+    const [cartItems, setCartItems] = useState();
     const [cartId, setCartId] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isCartVisible, setIsCartVisible] = useState(false);
+    
 
     useEffect(() => {
         const fetchData = async () => {
@@ -48,10 +51,31 @@ function StoreComponent() {
                 quantity: 1,
             });
             console.log('Item added to cart:', response.data);
-            setCartItems([...cartItems, response.data]);  // Update cart items state
+
+
+
+            // Fetch product details
+
+            const productResponse = await axiosInstance.get(`/products/${productId}/`);
+
+            const productDetails = productResponse.data;
+
+
+
+            // Include product details in the cart item
+
+            const cartItemWithDetails = { ...response.data, product: productDetails };
+
+
+
+            setCartItems([...cartItems, cartItemWithDetails]);  // Update cart items state
+
         } catch (error) {
+
             console.error('Error adding item to cart:', error);
+
         }
+
     };
         
 
@@ -74,51 +98,65 @@ function StoreComponent() {
 
     return (
         <div>
-            <h1>Store</h1>
-            <div>
-                <h2>Products</h2>
-                {products.length === 0 ? (
-                    <p>No products available</p>
-                ) : (
+            <header>
+                <nav>
+                    <h1>Store</h1>
                     <ul>
-                        {products.map(product => (
-                            <li key={product.id}>
-                                <div>
-                                    {product.images && product.images.length > 0 && (
-                                        <img
-                                            src={product.images[0]}
-                                            alt={product.title}
-                                            style={{ width: '100px', height: '100px' }}
-                                        />
-                                    )}
-                                    <h2>{product.title}</h2>
-                                    <p>{product.description}</p>
-                                    <p>{product.price}</p>
-                                    <button onClick={() => addToCart(product.id)}>Add to Cart</button>
-                                </div>
-                            </li>
-                        ))}
+                        <li>
+                            <button className="link-button" onClick={() => setIsCartVisible(!isCartVisible)}>
+                                <span className="cart-icon">🛒</span>
+                                <span className="cart-count">{cartItems.length}</span>
+                            </button>
+                        </li>
                     </ul>
-                )}
-            </div>
-            <div>
+                </nav>
+            </header>
+
+            <main>
+                <div className="products">
+                    <h2>Products</h2>
+                    {products.length === 0 ? (
+                        <p>No products available</p>
+                    ) : (
+                        <ul>
+                            {products.map(product => (
+                                <li key={product.id} className="product-card">
+                                    <div>
+                                        {product.images && product.images.length > 0 && (
+                                            <img
+                                                src={product.images[0]}
+                                                alt={product.title}
+                                            />
+                                        )}
+                                        <h3>{product.title}</h3>
+                                        <p>{product.description}</p>
+                                        <p>${product.price}</p>
+                                        <button onClick={() => addToCart(product.id)}>Add to Cart</button>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            </main>
+
+            <div className={`cart-panel ${isCartVisible ? 'visible' : ''}`}>
+                <button className="close-btn" onClick={() => setIsCartVisible(false)}>X</button>
                 <h2>Cart</h2>
                 {cartItems.length === 0 ? (
                     <p>No items in cart</p>
                 ) : (
                     <ul>
                         {cartItems.map(item => (
-                            <li key={item.id}>
+                            <li key={item.id} className="cart-item">
                                 <div>
                                     {item.product.images && item.product.images.length > 0 && (
                                         <img
                                             src={item.product.images[0]}
                                             alt={item.product.title}
-                                            style={{ width: '100px', height: '100px' }}
                                         />
                                     )}
-                                    <h2>{item.product.title}</h2>
-                                    <p>{item.product.description}</p>
+                                    <h3>{item.product.title}</h3>
                                     <p>${item.product.price}</p>
                                     <button onClick={() => removeItem(item.id)}>Remove</button>
                                 </div>

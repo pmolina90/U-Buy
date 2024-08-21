@@ -6,8 +6,7 @@ import WelcomeComponent from './WelcomeComponent'; // Import the new component
 import StoreComponent from './StoreComponent';
 import AdminComponent from './adminComponent';
 import LoginComponent from './LoginComponent';
-import './WelcomeComponent.css'; // Import the CSS for the new component
-import './StoreComponent.css'; // import the CSS for the Store
+import './WelcomeComponent.css'; // Import the CSS for the
 import { logout as authLogout } from './auth';
 
 const PrivateRoute = ({ element, roles }) => {
