@@ -64,12 +64,10 @@ function App() {
         <div>
           {isAuthenticated ? (
             <>
-              <p>Welcome, {user.name}!</p>
-              <button onClick={handleLogout}>Log Out</button>
               <Routes>
                 <Route
                   path="/store"
-                  element={<PrivateRoute roles={['User', 'Admin']} element={<StoreComponent />} />}
+                  element={<PrivateRoute roles={['User', 'Admin']} element={<StoreComponent user={user} handleLogout={handleLogout} />} />}
                 />
                 <Route
                   path="/admin"
@@ -86,17 +84,14 @@ function App() {
                   <Route path="*" element={<Navigate to="/store" />} />
                 </Routes>
               ) : (
-                <>
-                  <WelcomeComponent />
-                  <Routes>
-                    <Route path="/" element={<WelcomeComponent />} />
-                    <Route
-                      path="/login"
-                      element={<LoginComponent onLoginSuccess={handleLoginSuccess} />}
-                    />
-                    <Route path="*" element={<Navigate to="/" />} />
-                  </Routes>
-                </>
+                <Routes>
+                  <Route path="/" element={<WelcomeComponent />} />
+                  <Route
+                    path="/login"
+                    element={<LoginComponent onLoginSuccess={handleLoginSuccess} />}
+                  />
+                  <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
               )}
             </>
           )}
